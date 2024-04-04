@@ -32,5 +32,5 @@ $> ./QtTemplateInterpreterEditor &
 
 ## Example of work
 
-![Run](https://github.com/AnthonySnow887/QtTemplateInterpreterEditor/Run.png?raw=true)
-![Error](https://github.com/AnthonySnow887/QtTemplateInterpreterEditor/Err.png?raw=true)
+![Run](https://github.com/AnthonySnow887/QtTemplateInterpreterEditor/blob/master/Run.png?raw=true)
+![Error](https://github.com/AnthonySnow887/QtTemplateInterpreterEditor/blob/master/Err.png?raw=true)
