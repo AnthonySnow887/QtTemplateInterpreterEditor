@@ -2,6 +2,7 @@
 #include "ui_MainWindow.h"
 
 #include "widgets/CodeEditor.h"
+#include "QtTemplateInterpreterEditorVersion.h"
 
 #include <QRegExp>
 #include <QElapsedTimer>
@@ -11,8 +12,8 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    //    setWindowTitle("Laurus Post-Processing Tool");
-    //    setWindowIcon(QIcon(":/icons/icons/Laurus_black.png"));
+    setWindowTitle(QString("QtTemplate Interpreter Editor - %1")
+                   .arg(QT_TEMPLATE_INTERPRETER_EDITOR_VERSION_STR));
 
     ui->toolBar->setMovable(false);
     QAction *act = ui->toolBar->addAction(QIcon(":/icons/icons/start_16.png"), QString("Run"));

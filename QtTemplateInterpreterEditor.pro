@@ -50,6 +50,7 @@ SOURCES += \
 
 HEADERS += \
     MainWindow.h \
+    QtTemplateInterpreterEditorVersion.h \
     widgets/CodeEditor.h \
     widgets/LineNumberArea.h \
     widgets/SyntaxHighlighter.h
