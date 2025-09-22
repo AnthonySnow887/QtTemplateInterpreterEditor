@@ -18,7 +18,7 @@ CodeEditor::CodeEditor(QWidget *parent)
             this, &CodeEditor::clearHighlightLine);
 
     connect(verticalScrollBar(), &QScrollBar::valueChanged,
-            [this](int) {
+            this, [this](int) {
         _lineNumberArea->update();
     });
 
@@ -105,14 +105,22 @@ void CodeEditor::updateLineNumberArea(const QRect &rect)
         updateLineNumberAreaWidth(0);
 }
 
-void CodeEditor::highlightErrorLine(const int line)
+void CodeEditor::highlightErrorLine(const int line, const int pos)
 {
-    highlightLine(QImage(":/icons/icons/error_16.png"), QColor(Qt::red).lighter(185), line);
+    highlightLine(QImage(":/icons/icons/error_16.png"),
+                  QColor(Qt::red).lighter(185),
+                  QColor(Qt::red),
+                  line,
+                  pos);
 }
 
-void CodeEditor::highlightWarningLine(const int line)
+void CodeEditor::highlightWarningLine(const int line, const int pos)
 {
-    highlightLine(QImage(":/icons/icons/warning_16.png"), QColor("#e5be22").lighter(185), line);
+    highlightLine(QImage(":/icons/icons/warning_16.png"),
+                  QColor("#e5be22").lighter(185),
+                  QColor("#e5be22"),
+                  line,
+                  pos);
 }
 
 void CodeEditor::clearHighlightLine()
@@ -128,14 +136,19 @@ void CodeEditor::clearHighlightLine()
     _lineNumberArea->removeImages();
 }
 
-void CodeEditor::highlightLine(const QImage &image, const QColor &color, const int line)
+void CodeEditor::highlightLine(const QImage &image,
+                               const QColor &color,
+                               const QColor &colorUnderline,
+                               const int line,
+                               const int pos)
 {
     if (document()->blockCount() < (line - 1))
         return;
 
     QList<QTextEdit::ExtraSelection> extraSelections;
     if (!isReadOnly()) {
-        QTextCursor cursor(document()->findBlockByNumber(line - 1));
+        const QTextBlock b = document()->findBlockByNumber(line - 1);
+        QTextCursor cursor(b);
         setTextCursor(cursor);
 
         QTextEdit::ExtraSelection selection;
@@ -144,6 +157,17 @@ void CodeEditor::highlightLine(const QImage &image, const QColor &color, const i
         selection.cursor = textCursor();
         selection.cursor.clearSelection();
         extraSelections.append(selection);
+
+        QTextEdit::ExtraSelection selection2;
+        selection2.format.setFontUnderline(true);
+        selection2.format.setUnderlineColor(colorUnderline);
+        selection2.format.setUnderlineStyle(QTextCharFormat::WaveUnderline);
+        selection2.cursor = textCursor();
+        selection2.cursor.clearSelection();
+        selection2.cursor.movePosition(QTextCursor::Right, QTextCursor::MoveAnchor, pos);
+        selection2.cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, b.text().size() - pos);
+        extraSelections.append(selection2);
+
         _lineNumberArea->paintImage(image, (line - 1));
     }
     setExtraSelections(extraSelections);

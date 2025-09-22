@@ -65,10 +65,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::highlightErrorLine(const QString errorMsg)
 {
-    QRegExp rx(".*in line (\\d+)");
+    QRegExp rx(".*in line (\\d+) \\(position (\\d+)\\)");
     if (rx.lastIndexIn(errorMsg) == -1)
         return;
-    _codeWidget->highlightErrorLine(rx.cap(1).toInt());
+    _codeWidget->highlightErrorLine(rx.cap(1).toInt(), rx.cap(2).toInt());
 }
 
 void MainWindow::onRun()

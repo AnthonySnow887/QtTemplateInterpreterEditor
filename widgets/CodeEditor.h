@@ -33,12 +33,16 @@ public Q_SLOTS:
     void updateLineNumberAreaWidth(int newBlockCount);
     void updateLineNumberArea(const QRect &rect);
 
-    void highlightErrorLine(const int line);
-    void highlightWarningLine(const int line);
+    void highlightErrorLine(const int line, const int pos);
+    void highlightWarningLine(const int line, const int pos);
     void clearHighlightLine();
 
 protected Q_SLOTS:
-    void highlightLine(const QImage &image, const QColor &color, const int line);
+    void highlightLine(const QImage &image,
+                       const QColor &color,
+                       const QColor &colorUnderline,
+                       const int line,
+                       const int pos);
 
 protected:
     void paintEvent(QPaintEvent* e) override;
