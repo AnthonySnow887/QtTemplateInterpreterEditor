@@ -12,8 +12,9 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    setWindowTitle(QString("QtTemplate Interpreter Editor - %1")
-                   .arg(QT_TEMPLATE_INTERPRETER_EDITOR_VERSION_STR));
+    setWindowTitle(QString("QtTemplate Interpreter Editor - %1 (based on QtTemplateInterpreter - %2)")
+                   .arg(QT_TEMPLATE_INTERPRETER_EDITOR_VERSION_STR,
+                        QT_TEMPLATE_INTERPRETER_VERSION_STR));
 
     ui->toolBar->setMovable(false);
     QAction *act = ui->toolBar->addAction(QIcon(":/icons/icons/start_16.png"), QString("Run"));
@@ -56,6 +57,10 @@ MainWindow::MainWindow(QWidget *parent)
         _consoleWidget->append(QString("[Var-Dump] %1\n").arg(tmpStr).trimmed());
         return "";
     }));
+
+    // show title in console
+    _consoleWidget->setTextColor(QColor(Qt::gray));
+    _consoleWidget->append(windowTitle());
 }
 
 MainWindow::~MainWindow()
@@ -65,10 +70,17 @@ MainWindow::~MainWindow()
 
 void MainWindow::highlightErrorLine(const QString errorMsg)
 {
+#if QT_TEMPLATE_INTERPRETER_VERSION < QT_TEMPLATE_INTERPRETER_VERSION_CHECK(1, 2, 0)
     QRegExp rx(".*in line (\\d+)");
     if (rx.lastIndexIn(errorMsg) == -1)
         return;
-    _codeWidget->highlightErrorLine(rx.cap(1).toInt());
+    _codeWidget->highlightErrorLine(rx.cap(1).toInt(), 0);
+#else
+    QRegExp rx(".*in line (\\d+) \\(position (\\d+)\\)");
+    if (rx.lastIndexIn(errorMsg) == -1)
+        return;
+    _codeWidget->highlightErrorLine(rx.cap(1).toInt(), rx.cap(2).toInt());
+#endif
 }
 
 void MainWindow::onRun()

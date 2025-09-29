@@ -24,17 +24,31 @@ RCC_DIR     = build
 
 # Build flags
 CONFIG += c++14
-QMAKE_CXXFLAGS += -std=c++14 \
-                  -fopenmp \
-                  -Wall \
-                  -Wextra \
-                  -Wcast-align \
-                  -Wcast-qual \
-                  -Wlogical-op \
-                  -Woverloaded-virtual
+# MSVC-specific
+equals (QMAKE_COMPILER, "msvc"): {
+    greaterThan(QMAKE_MSC_VER, 1909): QMAKE_CXXFLAGS += /std:c++14
+#    QMAKE_CXXFLAGS_WARN_ON ~= s/-W3/-W4
+    QMAKE_CXXFLAGS += /openmp \
+                      /W3 \
+                      /sdl
+    CONFIG(debug, debug|release): QMAKE_CXXFLAGS += /Od
+    CONFIG(release, debug|release): QMAKE_CXXFLAGS += /O2
+    contains(DEFINES, BUILD_FLAG_ERROR): QMAKE_CXXFLAGS += -WX
+    DEFINES += USING_MSVC
+}
+# GCC-specific
+equals(QMAKE_COMPILER, "gcc"): {
+    QMAKE_CXXFLAGS += -std=c++14 \
+                    -Wall \
+                    -Wextra \
+                    -Wcast-align \
+                    -Wcast-qual \
+                    -Wlogical-op \
+                    -Woverloaded-virtual
 
-CONFIG(debug, debug|release): QMAKE_CXXFLAGS += -O0
-CONFIG(release, debug|release): QMAKE_CXXFLAGS += -O3
+    CONFIG(debug, debug|release): QMAKE_CXXFLAGS += -O0
+    CONFIG(release, debug|release): QMAKE_CXXFLAGS += -O3
+}
 
 #win32 {
 #    RC_FILE += LaurusPostProcessingTool.rc
